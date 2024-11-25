@@ -59,7 +59,8 @@ function downloadVideo() {
         .then(data => {
             if (data.success) {
                 document.getElementById('message').innerHTML = `<a href="${data.downloadLink}" download>Click here to download ${format} (${quality})</a>`;
-            } else {
+            }
+            else {
                 document.getElementById('message').innerText = "Failed to download video.";
             }
         })
