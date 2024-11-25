@@ -2,15 +2,17 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-// Serve static files (HTML, CSS, JS) from the 'public' folder
 app.use(express.static('public'));
 
-// Handle download requests
 app.get('/download', (req, res) => {
     const videoUrl = req.query.url;
     const format = req.query.format;
+    const quality = req.query.quality;
 
-    if (!videoUrl || !format) {
+    console.log('Received request:', { videoUrl, format, quality });
+
+    if (!videoUrl || !format || !quality) {
+        console.error('Missing parameters:', { videoUrl, format, quality });
         return res.status(400).json({ success: false, message: 'Missing parameters' });
     }
 
