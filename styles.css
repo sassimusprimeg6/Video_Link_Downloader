@@ -5,15 +5,16 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-color: #f0f0f0;
+    background-color: black;
+    color: red;
 }
 
 .container {
     text-align: center;
-    background-color: white;
+    background-color: black;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
 }
 
 input {
@@ -21,20 +22,22 @@ input {
     padding: 10px;
     margin: 10px 0;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid #ff0000;
+    background-color: black;
+    color: red;
 }
 
 button {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
-    background-color: #007bff;
-    color: white;
+    background-color: #ff0000;
+    color: black;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #cc0000;
 }
 
 #message {
