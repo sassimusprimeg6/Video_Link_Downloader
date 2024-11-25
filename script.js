@@ -1,3 +1,13 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('videoLink');
+
+    input.addEventListener('keypress', function(event) {
+        if (event.keyCode === 13) { // Enter key is pressed
+            downloadVideo();
+        }
+    });
+});
+
 function downloadVideo() {
     const videoLink = document.getElementById('videoLink').value;
     const format = document.getElementById('format').value;
