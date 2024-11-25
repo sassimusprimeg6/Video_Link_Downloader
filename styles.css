@@ -21,6 +21,10 @@ h1 {
     color: white;
 }
 
+h2 {
+    color: white;
+}
+
 input, select {
     width: 80%;
     padding: 10px;
