@@ -6,10 +6,15 @@ function downloadVideo() {
         return;
     }
     
-    // This is a placeholder for the actual download logic
-    // You would need to use a server-side script to handle video downloading
+    document.getElementById('message').innerText = "Processing your request...";
+    
     fetch(`/download?url=${encodeURIComponent(videoLink)}&format=${encodeURIComponent(format)}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 document.getElementById('message').innerHTML = `<a href="${data.downloadLink}" download>Click here to download ${format}</a>`;
@@ -18,7 +23,7 @@ function downloadVideo() {
             }
         })
         .catch(error => {
-            document.getElementById('message').innerText = "An error occurred.";
+            document.getElementById('message').innerText = `An error occurred: ${error.message}`;
             console.error('Error:', error);
         });
 }
