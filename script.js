@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function downloadVideo() {
     const videoLink = document.getElementById('videoLink').value;
     const format = document.getElementById('format').value;
+    const quality = document.getElementById('quality').value;
     if (!videoLink) {
         document.getElementById('message').innerText = "Please enter a video link.";
         return;
@@ -18,7 +19,7 @@ function downloadVideo() {
     
     document.getElementById('message').innerText = "Processing your request...";
     
-    fetch(`/download?url=${encodeURIComponent(videoLink)}&format=${encodeURIComponent(format)}`)
+    fetch(`/download?url=${encodeURIComponent(videoLink)}&format=${encodeURIComponent(format)}&quality=${encodeURIComponent(quality)}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -27,7 +28,7 @@ function downloadVideo() {
         })
         .then(data => {
             if (data.success) {
-                document.getElementById('message').innerHTML = `<a href="${data.downloadLink}" download>Click here to download ${format}</a>`;
+                document.getElementById('message').innerHTML = `<a href="${data.downloadLink}" download>Click here to download ${format} (${quality})</a>`;
             }
             else {
                 document.getElementById('message').innerText = "Failed to download video.";
