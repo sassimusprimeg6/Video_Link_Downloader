@@ -6,7 +6,37 @@ document.addEventListener('DOMContentLoaded', function() {
             downloadVideo();
         }
     });
+
+    // Initialize quality options based on default format selection
+    updateQualityOptions();
 });
+
+function updateQualityOptions() {
+    const format = document.getElementById('format').value;
+    const qualitySelect = document.getElementById('quality');
+    
+    while (qualitySelect.firstChild) {
+        qualitySelect.removeChild(qualitySelect.firstChild);
+    }
+    
+    if (format === 'mp4') {
+        const mp4Options = ['720p', '1080p', '4K'];
+        mp4Options.forEach(option => {
+            let opt = document.createElement('option');
+            opt.value = option.toLowerCase();
+            opt.textContent = option;
+            qualitySelect.appendChild(opt);
+        });
+    } else if (format === 'mp3') {
+        const mp3Options = ['128kbps', '192kbps', '320kbps'];
+        mp3Options.forEach(option => {
+            let opt = document.createElement('option');
+            opt.value = option;
+            opt.textContent = option;
+            qualitySelect.appendChild(opt);
+        });
+    }
+}
 
 function downloadVideo() {
     const videoLink = document.getElementById('videoLink').value;
@@ -29,8 +59,7 @@ function downloadVideo() {
         .then(data => {
             if (data.success) {
                 document.getElementById('message').innerHTML = `<a href="${data.downloadLink}" download>Click here to download ${format} (${quality})</a>`;
-            }
-            else {
+            } else {
                 document.getElementById('message').innerText = "Failed to download video.";
             }
         })
