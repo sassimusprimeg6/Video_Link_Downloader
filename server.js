@@ -1,29 +1,56 @@
-const express = require('express');
-const app = express();
-const port = 3000;
+const express = require('express')
+const cors = require('cors')
+const path = require('path')
+const helmet = require('helmet')
 
-app.use(express.static('public'));
+const app = express()
+const port = 3000
 
+// Enable CORS
+app.use(cors())
+
+// Helmet CSP for security
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        imgSrc: ["'self'", 'data:'],
+        scriptSrc: ["'self'"],
+      },
+    },
+  })
+)
+
+// Serve static files from public folder
+app.use(express.static(path.join(__dirname, 'public')))
+
+// Root route — serve index.html
+app.get('/', (req, res) => {
+  res.sendFile('index.html', { root: path.join(__dirname, 'public') })
+})
+
+// Download endpoint
 app.get('/download', (req, res) => {
-    const videoUrl = req.query.url;
-    const format = req.query.format;
-    const quality = req.query.quality;
+  const { url, format, quality } = req.query
+  console.log('Received request:', { url, format, quality })
 
-    console.log('Received request:', { videoUrl, format, quality });
+  if (!url || !format || !quality) {
+    return res
+      .status(400)
+      .json({ success: false, message: 'Missing parameters' })
+  }
 
-    if (!videoUrl || !format || !quality) {
-        console.error('Missing parameters:', { videoUrl, format, quality });
-        return res.status(400).json({ success: false, message: 'Missing parameters' });
-    }
+  // Simulated download response
+  res.json({
+    success: true,
+    downloadLink: `/path/to/downloaded/file.${format}`,
+  })
+})
 
-    // Placeholder for actual download logic
-    // Simulate success response
-    res.json({
-        success: true,
-        downloadLink: `/path/to/downloaded/file.${format}`
-    });
-});
-
+// Start server
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
+  console.log(`Server running at http://localhost:${port}`)
+})
