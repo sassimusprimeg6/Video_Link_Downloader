@@ -43,7 +43,7 @@ app.get('/download', (req, res) => {
       .json({ success: false, message: 'Missing parameters' })
   }
 
-  // Simulated download response
+  // TO BE DONE - ADD DOWNLOAD LOGIC
   res.json({
     success: true,
     downloadLink: `/path/to/downloaded/file.${format}`,
