@@ -1,12 +1,26 @@
 document.addEventListener('DOMContentLoaded', function () {
   const input = document.getElementById('videoLink')
+  const formatSelect = document.getElementById('format')
+  const downloadButton = document.getElementById('downloadButton')
 
+  // Handle Enter key on input
   input.addEventListener('keypress', function (event) {
     if (event.key === 'Enter') {
       downloadVideo()
     }
   })
 
+  // Handle format change
+  formatSelect.addEventListener('change', function () {
+    updateQualityOptions()
+  })
+
+  // Handle download button click
+  downloadButton.addEventListener('click', function () {
+    downloadVideo()
+  })
+
+  // Initialize quality options
   updateQualityOptions()
 })
 
@@ -17,21 +31,14 @@ function updateQualityOptions() {
   // Clear existing options
   qualitySelect.innerHTML = ''
 
-  if (format === 'mp4') {
-    ;['720p', '1080p', '4K'].forEach((opt) => {
-      const option = document.createElement('option')
-      option.value = opt.toLowerCase()
-      option.textContent = opt
-      qualitySelect.appendChild(option)
-    })
-  } else if (format === 'mp3') {
-    ;['128kbps', '192kbps', '320kbps'].forEach((opt) => {
-      const option = document.createElement('option')
-      option.value = opt
-      option.textContent = opt
-      qualitySelect.appendChild(option)
-    })
-  }
+  // Both mp3 and mp4 use the same quality options (720p, 1080p, 4K)
+  // For mp3, the quality parameter is accepted but audio quality is handled by the backend
+  ;['720p', '1080p', '4K'].forEach((opt) => {
+    const option = document.createElement('option')
+    option.value = opt.toLowerCase()
+    option.textContent = opt
+    qualitySelect.appendChild(option)
+  })
 }
 
 function downloadVideo() {
@@ -46,24 +53,34 @@ function downloadVideo() {
 
   document.getElementById('message').innerText = 'Processing your request...'
 
-  fetch(
-    `/download?url=${encodeURIComponent(videoLink)}&format=${encodeURIComponent(
-      format
-    )}&quality=${encodeURIComponent(quality)}`
-  )
+  const downloadUrl = `/download?url=${encodeURIComponent(videoLink)}&format=${encodeURIComponent(
+    format
+  )}&quality=${encodeURIComponent(quality)}`
+
+  fetch(downloadUrl)
     .then((res) => {
-      if (!res.ok) throw new Error('Network response was not ok')
-      return res.json()
-    })
-    .then((data) => {
-      if (data.success) {
-        document.getElementById(
-          'message'
-        ).innerHTML = `<a href="${data.downloadLink}" download>Click here to download ${format} (${quality})</a>`
-      } else {
-        document.getElementById('message').innerText =
-          'Failed to download video.'
+      const contentType = res.headers.get('content-type') || ''
+      
+      // If it's JSON, it's an error response
+      if (contentType.includes('application/json') || !res.ok) {
+        return res.json().then((data) => {
+          throw new Error(data.message || 'Download failed')
+        })
       }
+      
+      // It's a file download - get the blob and trigger download
+      return res.blob().then((blob) => {
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `video.${format}`
+        a.style.display = 'none'
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+        document.getElementById('message').innerText = 'Download started!'
+      })
     })
     .catch((err) => {
       document.getElementById(
